@@ -1,7 +1,8 @@
-const dotenv = require('dotenv');
-const express = require('express');
-const cors = require('cors');
-const connectDB = require('./config/db');
+import dotenv from 'dotenv';
+import express from 'express';
+import cors from 'cors';
+import connectDB from './config/db.js';
+import authRoutes from './routes/auth.js';
 
 dotenv.config();
 
@@ -13,8 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/auth', require('./routes/auth'));
-
+app.use('/api/auth', authRoutes);
 app.get('/', (req, res) => {
   res.json({ message: 'DevQuest API is running' });
 });

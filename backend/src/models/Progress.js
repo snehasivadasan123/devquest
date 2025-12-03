@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-
+import mongoose from 'mongoose';
 const ProgressSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,

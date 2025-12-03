@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import { Schema, model } from 'mongoose';
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new Schema({
   username: {
     type: String,
     required: [true, 'Username is required'],
@@ -38,9 +38,9 @@ const UserSchema = new mongoose.Schema({
     type: String
   }],
   completedQuests: [{
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'Quest'
   }]
 });
 
-module.exports = mongoose.model('User', UserSchema);
+export default model('User', UserSchema);

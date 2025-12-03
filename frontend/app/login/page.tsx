@@ -1,55 +1,67 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { login } from "@/lib/api"
-
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { login } from "@/lib/api";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 export default function LoginForm() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [errors, setErrors] = useState<Record<string, string>>({})
-  const [isLoading, setIsLoading] = useState(false)
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const validateForm = () => {
-    const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {};
 
     if (!email) {
-      newErrors.email = "Email is required"
+      newErrors.email = "Email is required";
     }
 
     if (!password) {
-      newErrors.password = "Password is required"
+      newErrors.password = "Password is required";
     }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (!validateForm()) return
+    if (!validateForm()) return;
 
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const response = await login({ email, password })
-      
+      const response = await login({ email, password });
+
+      toast.success("Login successful!");
+
       // Store token in localStorage
-      localStorage.setItem('token', response.token)
-      
+      localStorage.setItem("token", response.token);
+
       // Redirect to home page
-      window.location.href = '/'
+      router.push("/dashboard");
     } catch (error) {
-      console.error(error)
-      setErrors({ submit: error instanceof Error ? error.message : "Invalid login credentials" })
+      console.error(error);
+      setErrors({
+        submit:
+          error instanceof Error ? error.message : "Invalid login credentials",
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Card className="border border-primary/30 bg-card/50 backdrop-blur-xl shadow-2xl max-w-md mx-auto mt-20 relative">
@@ -62,7 +74,6 @@ export default function LoginForm() {
 
       <CardContent className="relative z-10">
         <form onSubmit={handleSubmit} className="space-y-4">
-
           {/* Email */}
           <div className="space-y-2">
             <Label htmlFor="email" className="text-foreground font-medium">
@@ -81,7 +92,11 @@ export default function LoginForm() {
                   : "border-border focus:border-primary hover:border-primary/50"
               }`}
             />
-            {errors.email && <p className="text-sm text-destructive font-medium">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-sm text-destructive font-medium">
+                {errors.email}
+              </p>
+            )}
           </div>
 
           {/* Password */}
@@ -102,10 +117,18 @@ export default function LoginForm() {
                   : "border-border focus:border-primary hover:border-primary/50"
               }`}
             />
-            {errors.password && <p className="text-sm text-destructive font-medium">{errors.password}</p>}
+            {errors.password && (
+              <p className="text-sm text-destructive font-medium">
+                {errors.password}
+              </p>
+            )}
           </div>
 
-          {errors.submit && <p className="text-sm text-destructive font-medium">{errors.submit}</p>}
+          {errors.submit && (
+            <p className="text-sm text-destructive font-medium">
+              {errors.submit}
+            </p>
+          )}
 
           {/* Button */}
           <Button
@@ -121,12 +144,15 @@ export default function LoginForm() {
         <div className="mt-8 text-center border-t border-border/30 pt-6">
           <p className="text-sm text-muted-foreground">
             Don’t have an account?{" "}
-            <Link href="/register" className="font-semibold text-primary hover:text-accent transition-colors duration-200">
+            <Link
+              href="/register"
+              className="font-semibold text-primary hover:text-accent transition-colors duration-200"
+            >
               Sign up
             </Link>
           </p>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

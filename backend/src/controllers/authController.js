@@ -1,8 +1,8 @@
-const User = require('../models/User');
-const { hashPassword, comparePassword, generateToken, verifyToken } = require('../utils/auth');
+import User from '../models/User.js';
+import { hashPassword, comparePassword, generateToken, verifyToken } from '../utils/auth.js';
 
 // Register Controller
-exports.register = async (req, res) => {
+export async function register(req, res) {
   console.log("yes")
   try {
     const { username, email, password } = req.body;
@@ -10,25 +10,20 @@ exports.register = async (req, res) => {
     if (!username || !email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
     }
-
     if (password.length < 6) {
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
-
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
 
     if (existingUser) {
       return res.status(409).json({ error: 'User with this email or username already exists' });
     }
-
     const hashedPasswordData = await hashPassword(password);
-
     const user = await User.create({
       username,
       email,
       password: hashedPasswordData
     });
-
     const token = generateToken({
       userId: user._id.toString(),
       email: user.email,
@@ -50,10 +45,10 @@ exports.register = async (req, res) => {
     console.error('Registration error:', error);
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
-};
+}
 
 // Login Controller
-exports.login = async (req, res) => {
+export async function login(req, res) {
   try {
     const { email, password } = req.body;
 
@@ -95,10 +90,10 @@ exports.login = async (req, res) => {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
-};
+}
 
 // Get Current User Controller
-exports.getMe = async (req, res) => {
+export async function getMe(req, res) {
   try {
     const authHeader = req.headers.authorization;
 
@@ -135,4 +130,4 @@ exports.getMe = async (req, res) => {
     console.error('Get user error:', error);
     res.status(500).json({ error: 'Internal server error', details: error.message });
   }
-};
+}
