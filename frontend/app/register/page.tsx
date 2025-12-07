@@ -52,6 +52,8 @@ export default function RegisterForm() {
       const response = await register({ username, email, password })
       
       localStorage.setItem('token', response.token)
+      localStorage.setItem('userId', response.user.id)
+      localStorage.setItem('username', response.user.username)
       
       window.location.href = '/'
     } catch (error) {

@@ -44,11 +44,14 @@ export default function LoginForm() {
     setIsLoading(true);
     try {
       const response = await login({ email, password });
+      console.log("Login successful:", response.user.id);
 
       toast.success("Login successful!");
 
       // Store token in localStorage
       localStorage.setItem("token", response.token);
+      localStorage.setItem("userId", response.user.id);
+      localStorage.setItem("username", response.user.username);
 
       // Redirect to home page
       router.push("/dashboard");

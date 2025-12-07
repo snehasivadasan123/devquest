@@ -17,9 +17,9 @@ const ProgressSchema = new mongoose.Schema({
   completedAt: {
     type: Date
   },
-  solution: {
-    type: String
-  },
+  // solution: {
+  //   type: String
+  // },
   pointsEarned: {
     type: Number,
     default: 0
@@ -28,4 +28,4 @@ const ProgressSchema = new mongoose.Schema({
 
 ProgressSchema.index({ userId: 1, questId: 1 }, { unique: true });
 
-module.exports = mongoose.model('Progress', ProgressSchema);
+export default mongoose.model('Progress', ProgressSchema);

@@ -5,12 +5,12 @@ const QuestSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Title is required'],
     trim: true,
-    minlength: [3, 'Title must be at least 3 characters']
+    // minlength: [3, 'Title must be at least 3 characters']
   },
   description: {
     type: String,
     required: [true, 'Description is required'],
-    minlength: [10, 'Description must be at least 10 characters']
+    // minlength: [10, 'Description must be at least 10 characters']
   },
   difficulty: {
     type: String,
@@ -21,26 +21,26 @@ const QuestSchema = new mongoose.Schema({
   points: {
     type: Number,
     required: true,
-    min: [10, 'Points must be at least 10']
+    // min: [10, 'Points must be at least 10']
   },
-  category: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  testCases: [{
-    input: { type: String, required: true },
-    expectedOutput: { type: String, required: true }
-  }],
+  // category: {
+  //   type: String,
+  //   required: true,
+  //   trim: true
+  // },
+  // testCases: [{
+  //   input: { type: String, required: true },
+  //   expectedOutput: { type: String, required: true }
+  // }],
   createdAt: {
     type: Date,
     default: Date.now
   },
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  }
+  // createdBy: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'User',
+  //   required: true
+  // }
 });
 
-module.exports = mongoose.model('Quest', QuestSchema);
+export default mongoose.model('Quest', QuestSchema);

@@ -27,15 +27,39 @@ export async function register(data: RegisterData): Promise<AuthResponse> {
     const response = await axios.post(`${API_URL}/auth/register`, data)
     return response.data
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Registration failed')
+    const message = error.response?.data?.error || error.response?.data?.message || error.message || 'Registration failed'
+    throw new Error(message)
   }
 }
 
 export async function login(data: LoginData): Promise<AuthResponse> {
   try {
     const response = await axios.post(`${API_URL}/auth/login`, data)
+    console.log("Login response data:", response.data);
     return response.data
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Login failed')
+    const message = error.response?.data?.error || error.response?.data?.message || error.message || 'Login failed'
+    throw new Error(message)
+  }
+}
+
+export async function getMe() {
+  try {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('No token found. Please login.');
+    }
+    
+    const response = await axios.get(`${API_URL}/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    
+    return response.data;
+  } catch (error: any) {
+    const message = error.response?.data?.error || error.message || 'Failed to get user data';
+    throw new Error(message);
   }
 }

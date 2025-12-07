@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
+import questRoutes from './routes/quest.js';
 
 dotenv.config();
 
@@ -15,6 +16,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/auth', authRoutes);
+app.use('/api/quest', questRoutes);
+
 app.get('/', (req, res) => {
   res.json({ message: 'DevQuest API is running' });
 });

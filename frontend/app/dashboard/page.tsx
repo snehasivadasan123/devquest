@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -12,70 +12,80 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Award, Star, Zap, Target, Code, Flame } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { getUserProgress } from "@/lib/progress";
+import { getMe } from "@/lib/api";
+import { getAllQuest } from "@/lib/quest";
+
 export default function DevQuestDashboard() {
-  const [user] = useState({
-    name: "Alex Developer",
-    level: 12,
-    currentXP: 2450,
-    xpToNextLevel: 3000,
-    totalQuests: 45,
-    completedQuests: 32,
-  });
+  const [user, setUser] = useState({
+  name: "",
+  level: 1,
+  currentXP: 0,
+  xpToNextLevel: 1000,
+  totalQuests: 0,
+  completedQuests: 0,
+});
+
+  
 
   const badges = [
     {
       id: 1,
-      name: "First Quest",
-      icon: Star,
+      name: "First Steps",
+      description: "Complete your first quest",
+      icon: Target,
       color: "text-blue-600",
-      earned: true,
+      earned: user.completedQuests >= 1,
     },
     {
       id: 2,
-      name: "Speed Runner",
-      icon: Zap,
+      name: "Quest Master",
+      description: "Complete 5 quests",
+      icon: Flame,
       color: "text-blue-600",
-      earned: true,
+      earned: user.completedQuests >= 5,
     },
     {
       id: 3,
-      name: "Perfect Score",
-      icon: Trophy,
+      name: "XP Hunter",
+      description: "Earn 500 XP",
+      icon: Zap,
       color: "text-blue-600",
-      earned: true,
-    },
-    {
-      id: 4,
-      name: "Code Master",
-      icon: Code,
-      color: "text-blue-600",
-      earned: true,
-    },
-    {
-      id: 5,
-      name: "10 Streak",
-      icon: Flame,
-      color: "text-blue-600",
-      earned: true,
-    },
-    {
-      id: 6,
-      name: "Challenge Pro",
-      icon: Target,
-      color: "text-gray-400",
-      earned: false,
-    },
-    {
-      id: 7,
-      name: "Elite Coder",
-      icon: Award,
-      color: "text-gray-400",
-      earned: false,
+      earned: user.currentXP >= 500,
     },
   ];
 
   const progressPercentage = (user.currentXP / user.xpToNextLevel) * 100;
   const router = useRouter();
+
+  useEffect(() => {
+  async function fetchData() {
+    try {
+      const userData = await getMe();
+      const questResponse = await getAllQuest(1, 100); // Get all quests
+      
+      // Handle new pagination format
+      const allQuests = questResponse.quests || questResponse;
+      
+      console.log("User data:", userData);
+      console.log("Total quests:", allQuests.length);
+      
+      setUser({
+        name: userData.user.username,
+        level: userData.user.level,
+        currentXP: userData.user.points,
+        xpToNextLevel: userData.user.level * 1000,
+        totalQuests: allQuests.length,
+        completedQuests: userData.user.completedQuests.length,
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+  
+  fetchData();
+}, []);
+
 
   function handlelogout() {
     localStorage.removeItem("token");
@@ -105,6 +115,7 @@ export default function DevQuestDashboard() {
               Manage Quest
             </Button>
             <Button
+              onClick={() => router.push("/solution")}
               variant="outline"
               className="border-blue-500 text-blue-600 hover:bg-blue-50"
             >
@@ -198,20 +209,6 @@ export default function DevQuestDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white border-blue-200">
-            <CardHeader>
-              <CardTitle className="text-blue-900 text-lg">
-                Success Rate
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-4xl font-bold text-blue-600">
-                {Math.round((user.completedQuests / user.totalQuests) * 100)}%
-              </p>
-              <p className="text-sm text-gray-600 mt-2">Quest completion</p>
-            </CardContent>
-          </Card>
-
           {/* Badges Section */}
           <Card className="col-span-full bg-white border-blue-200">
             <CardHeader>
@@ -224,7 +221,7 @@ export default function DevQuestDashboard() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {badges.map((badge) => {
                   const Icon = badge.icon;
                   return (
@@ -275,3 +272,7 @@ export default function DevQuestDashboard() {
     </div>
   );
 }
+function setUser(arg0: { name: any; level: any; currentXP: any; xpToNextLevel: number; completedQuests: any; }) {
+  throw new Error("Function not implemented.");
+}
+
